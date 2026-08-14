@@ -1,0 +1,27 @@
+@startuml vente use case
+
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Chargé de Vente" as Vente
+
+rectangle "Sunu Manager" {
+
+    usecase "Gérer Ventes / POS" as UC2
+    usecase "Solder / Gérer Dettes" as UC3
+
+    usecase "Créer une Dette" as UC_Dette
+    usecase "Enregistrer un Paiement" as UC_Paiement
+    usecase "Imprimer Reçu" as UC_Recu
+
+    Vente --> UC2
+    Vente --> UC3
+
+    UC2 .> UC_Recu : <<include>>
+    UC2 <.. UC_Dette : <<extend>>
+    UC3 .> UC_Paiement : <<include>>
+}
+
+
+@enduml

@@ -1,0 +1,24 @@
+
+@startuml inventaire use case
+
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Agent d'Inventaire" as Inventaire
+
+rectangle "Sunu Manager" {
+
+    usecase "Consulter Stock & Tiers" as UC6
+
+    usecase "Consulter Liste des Produits" as UC_Produits
+    usecase "Vérifier Quantités en Stock" as UC_Stock
+
+    Inventaire --> UC6
+
+    UC6 .> UC_Produits : <<include>>
+    UC6 .> UC_Stock : <<include>>
+}
+
+
+@enduml

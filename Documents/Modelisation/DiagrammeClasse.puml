@@ -1,0 +1,87 @@
+@startuml Diagramme De Classe
+
+    class Produit {
+        int id
+        string nom
+        decimal prix_unitaire
+        int quantite_stock
+    }
+
+    class Client {
+        int id
+        string prenom
+        string nom
+        string telephone
+        string email
+        decimal limite_credit
+    }
+
+    class Fournisseur {
+        int id
+        string nom
+        string telephone
+        string adresse
+        string email
+    }
+
+    class Commande {
+        int id
+        datetime date
+        decimal montant_total
+        string mode_reglement
+        decimal montant_verse
+        string statut
+    }
+
+    class LigneCommande {
+        int quantite
+        decimal prix_unitaire
+        decimal sous_total
+    }
+
+    class Dette {
+        int id
+        datetime date_creation
+        decimal montant_initial
+        decimal montant_paye
+        decimal reste_du
+        string statut
+    }
+
+    class Paiement {
+        int id
+        datetime date
+        decimal montant_verse
+        string mode_paiement
+    }
+
+    class Approvisionnement {
+        int id
+        string ref_bl
+        datetime date
+        decimal valeur_lot
+        string statut
+    }
+
+    class LigneApprovisionnement {
+        int quantite_commandee
+        int quantite_livree
+        decimal cout_unitaire
+        decimal total
+    }
+
+    
+    Client "1" --> "0..*" Commande
+    Commande "1" --> "1..*" LigneCommande 
+    Produit "1" --> "0..*" LigneCommande
+
+    Commande "0..1" --> "0..1" Dette
+    Client "1" --> "0..*" Dette
+    Dette "1" --> "0..*" Paiement
+
+    Fournisseur "1" --> "0..*" Approvisionnement
+    Approvisionnement "1" --> "1..*" LigneApprovisionnement
+    Produit "1" --> "0..*" LigneApprovisionnement
+
+
+@enduml

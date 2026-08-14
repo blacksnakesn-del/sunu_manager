@@ -1,0 +1,31 @@
+@startuml adnmin use case!
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Admin Boutique" as Admin
+
+rectangle "Sunu Manager" {
+
+    usecase "Consulter Tableau de Bord" as UC1
+    usecase "Gérer Ventes / POS" as UC2
+    usecase "Solder / Gérer Dettes" as UC3
+    usecase "Gérer Approvisionnements" as UC4
+    usecase "Gérer Catalogue" as UC5
+
+    usecase "Créer une Dette" as UC_Dette
+    usecase "Enregistrer un Paiement" as UC_Paiement
+    usecase "Imprimer Reçu" as UC_Recu
+
+
+    Admin --> UC1
+    Admin --> UC2
+    Admin --> UC3
+    Admin --> UC4
+    Admin --> UC5
+
+    
+    UC2 .> UC_Recu : <<include>>
+    UC2 <.. UC_Dette : <<extend>> 
+    UC3 .> UC_Paiement : <<include>>
+}
+@enduml
