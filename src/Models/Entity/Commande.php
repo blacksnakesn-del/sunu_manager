@@ -1,4 +1,3 @@
-
 <?php
 
 namespace Model\Entity;
@@ -55,7 +54,7 @@ class Commande
     public function setClient(?Client $client): self { $this->client = $client; return $this; }
 
     public function getLignesCommande(): array { return $this->lignesCommande; }
-    
+
     public function addLigneCommande(LigneCommande $ligne): self
     {
         $this->lignesCommande[] = $ligne;
@@ -71,5 +70,4 @@ class Commande
         }
         return $this->montantTotal;
     }
-}
 }
