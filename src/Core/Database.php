@@ -20,12 +20,11 @@ class Database
 
     private static function connect(): PDO
     {
-        // 1. Configuration PostgreSQL
         $pgHost = 'localhost';
         $pgPort = '5432';
-        $pgDb   = 'boutique_db';
-        $pgUser = 'postgres';
-        $pgPass = 'postgres';
+        $pgDb   = 'sunuManager';
+        $pgUser = 'abdou-kebe';
+        $pgPass = 'tryhackme';
 
         $pgDsn = "pgsql:host={$pgHost};port={$pgPort};dbname={$pgDb}";
 

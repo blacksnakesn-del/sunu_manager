@@ -1,75 +1,102 @@
+# 📝 Journal de Développement (DEVLOG)
 
+* **Développeur** : Abdou Kebe
+* **Projet** : `sunu_manager` (ERP / PHP POO)
+* **Format** : Markdown (`DEVLOG.md`)
 
-I => Journal de Développement (DEVLOG)
-**
+---
 
-    Nom & Prenom => Abdou Kebe
-    Projet => sunu_manager(ERP PHP/POO)
+## 📅 Chronologie des Realisations
 
-**
+### 🔹 [Vendredi - Phase 1] : Conception UML & Architecture
+* **Heure de réalisation** : 17h00 - 20h00
+* **Réalisations** :
+  * Création de la structure de base du projet avec les deux dossiers principaux :
+    * `Development_Log/` : Suivi quotidien de l'avancement.
+    * `Documents/` : Contient les modélisations (Diagrammes de Use Cases pour les 4 profils utilisateurs et Diagramme de Classes des entités).
 
+---
 
-II => [Vendredi - Phase 1] : Conception UML
-**Heure de realisation** => 17h - 20h
-**
-    creation du structure du projet avec deux grand dossiers de base 
-    -- Dossier ( Developement_Log & Documents);
-    Le dossier "Developements" contient mon fichiers devlog.md c'est un document rédigé au fur et à mesure de votre avancement (pas au dernier moment) à la racine de votre projet.
+### 🔹 [Vendredi - Phase 1] : Modélisation BDD & Fallback SQLite
+* **Heure de réalisation** : Vendredi 21h00 - Samedi 12h00
+* **Réalisations** :
+  * Création des scripts SQL de base de données : `schemas.sql` (PostgreSQL) et `schemas_sqlite.sql` (SQLite).
+* **Difficultés & Obstacles** :
+  * **PostgreSQL** : Difficultés lors de la création des clés étrangères et de l'ajout des contraintes `CHECK`. Résolu avec l'aide de l'IA.
+  * **SQLite** : Compréhension initiale du fonctionnement de SQLite complexe. Travail d'explication et d'exemples pratiques avec l'IA pour assimiler les bases.
 
-    Le deuxieme dossier Documents contient des dossiers de modelisations 
-        - diagramme de use case des 4 differents profil
-        - diagramme de classe des entites utilisation
+---
 
-**
+### 🔹 [Samedi - Phase 1] : Singleton Database & Fallback Automatique
+* **Heure de réalisation** : Samedi 12h00 - 15h00
+* **Réalisations** :
+  * Création du dossier `src/Core/` et initialisation du composant de connexion BDD (`Database.php`).
+  * Implémentation du mécanisme de **fallback** : si PostgreSQL n'est pas disponible, le bloc `catch` prend le relais et bascule automatiquement sur SQLite.
+* **Difficultés & Obstacles** :
+  * Gestion propre de la redirection / basculement vers la base SQLite en cas d'erreur de connexion.
 
-III => **Probleme / Difficulter**
+---
 
-**
-    RAS
-**
+### 🔹 [Samedi - Phase 2] : Entités POO Pure
+* **Heure de réalisation** : Samedi 16h00 - 19h00
+* **Réalisations** :
+  * Implémentation complète des classes Entités dans `src/Model/Entity/` correspondant aux tables SQL.
+* **Difficultés & Obstacles** :
+  * Manipulation des entités et résolution d'incohérences de logique métier entre la BDD et le code POO.
 
+---
 
+### 🔹 [Samedi - Phase 2] : Repositories & SQL Sécurisé
+* **Heure de réalisation** : Samedi 20h00 - 00h00
+* **Réalisations** :
+  * Création du dossier `src/Repository/` contenant les classes d'accès aux données :
+    * `ClientRepository.php`
+    * `FournisseurRepository.php`
+    * `ProduitRepository.php`
+  * Sécurisation des requêtes SQL à l'aide des requêtes préparées PDO.
+* **Difficultés & Obstacles** :
+  * Conception et logique métier des fonctions de requêtage dans les Repositories.
 
-[Vendredi - Phase 1] : Conception & BDD Fallback
-**
- -** Heure de réalisation** => Vendredi 21H - Samedi 12H
- - Ce qui a été fait : Creation de deux fichiers srcipts (schemas.sql & schemas_sqlite.sql)
- - **Difficultés / Obstacles** : 
-    .. pour la realisation du schemas de base de donner j'ai rencontrer des problemes l'ors de la creation des tables et des cles migratoires ainsi que  dans l'ajout des contraintes check et autres! AI m'a beaucoup aider la dessus.
+---
 
-    ..  et pour le scripts du schemas sqlite j'ai pas compris grande chose la dessus j'ai travailler avec ai il ma expliquer puis proposer des exemples de pratique et j'ai eu une appercus un peu plus claire au depart mais apprentissages reste!!
-    
-**
+## 🔍 Partie Autopsie Code & Méthodes
 
+### 1. Pattern Singleton : `Database::getInstance()`
+* **Fichier** : `src/Core/Database.php`
+* **Rôle** : Garantir une instance unique de la connexion PDO à travers toute l'application.
 
-[Vendredi - Phase 1] : Singleton Database & Fallback Automatique
- - Heure de réalisation => Samedi 12H - 15H
- - **Ce qui a été fait** : j'ai creer un dossier de depart appeler src puis inclure une autres dossier core
-  et c'est dans cette dossier core que j'ai initialiser mon premiers fichiers de creation de connexion vers le data base 
-   Si PostgreSQL n'est pas disponible, le bloc catch prend le relais et ouvre la base SQLite
+```php
+public static function getInstance()
+---
 
- - **ifficultés / Obstacles** : 
-  .. la gestion du redirection vers sqlite!
+## 🔍 Partie Autopsie Code & Méthodes (Suite)
 
+### 2. Transaction Vente : `POSController::validerVente()`
+* **Fichier** : `src/Controllers/POSController.php`
+* **Rôle** : Traiter, valider et finaliser une transaction de vente au niveau du point de vente (POS).
+* **Explication ligne par ligne & Flux d'exécution** :
 
+```php
+// 1. Début de la transaction SQL
+$db->beginTransaction();
 
- [Samedi - Phase 2] :  Entités POO Pure
+// 2. Enregistrement de l'en-tête de la vente
+$venteId = $this->venteRepository->create($vente);
 
+// 3. Parcours des articles du panier
+foreach ($panier as$item) {
+    // 4. Contrôle ultime du stock réel disponible
+    $produit = $this->produitRepository->find($item['produit_id']);
+    if ($produit->getQuantiteStock() <$item['quantite']) {
+        throw new Exception("Stock insuffisant pour le produit : " . $produit->getNom());
+    }
 
-    **Heure de réalisation** : 16H - 19H 
-- **Ce qui a été fait** : l'implémentation complète des classes Entités dans
-                         src/Model/Entity/ correspondant au table du base de donnee. 
+    // 5. Enregistrement du détail de la ligne de vente
+    $this->detailVenteRepository->create($venteId,$item);
 
-- **Difficultés / Obstacles** : j'ai rencontre pas mal obstacle l'ors de la creation des entites 
-                            et de leur manipulations et surtouts un probleme de logique ou incoherences!
+    // 6. Mise à jour / Décrémentation du stock
+    $this->produitRepository->updateStock($produit->getId(), -$item['quantite']);
+}
 
-
-
- [Samedi - Phase 2] :  Repositories & SQL Sécurisé
- 
-    **Heure de réalisation** : 20H - 00H 
-   **Ce qui a été fait** : creer un dossier de depart Repository avec trois sous fichiers
-   (Clients.Repository, Fournisseurs.Repository, Produits.Repositry) pour la gestion sécurisée des accès en base de données avec des requêtes préparées PDO. 
-
- **Difficultés / Obstacles** : toujours avec la gestion ou logique des fonctions metiers
- 
+// 7. Validation définitive de la transaction
+$db->commit();
